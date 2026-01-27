@@ -1,7 +1,8 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 const env=require('dotenv')
-const mongoose=require('mongoose')
+const mongoose=require('mongoose');
+const Movie = require('./models/movie.model');
 
 
 env.config();
@@ -51,6 +52,17 @@ app.listen(process.env.PORT, async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
     console.log("Successfully connected to MongoDB");
+    await Movie.create({
+        name:"Bachhan Pandey",
+        description:"Comdey masal movie",
+        casts:["Akshay Kumar","Kriti Sanon","Jaxqueline Fernandiz"],
+        director:"Farhad Samji",
+        trailerUrl:"http://bachhanpandey/tarilers/1",
+        language:"Hindi",
+        relaseDate:"18-03-2022",
+        releaseStatus:"RELEASED"
+    });
+
   } catch (err) {
     console.log("Error while connecting to MongoDB", err);
   }
