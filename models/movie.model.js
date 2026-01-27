@@ -25,14 +25,14 @@ const movieSchema=new Schema({
     default:"English"
   },
   releaseDate:{
-    tyep:String,
+    type:String,
     required:true
   },
   director:{
     type:String,
     required:true
   },
-  releaseDate:{
+  releaseStatus:{
     type:String,
     required:true,
     default:"RELEASED"
