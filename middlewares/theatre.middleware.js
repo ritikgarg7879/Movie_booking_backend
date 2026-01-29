@@ -41,6 +41,4 @@ const validateTheatreCreateRequest= async(req,res,next)=>{
   
 }
 
-module.exports={
-  validateTheatreCreateRequest
-}
+module.exports={validateTheatreCreateRequest}
