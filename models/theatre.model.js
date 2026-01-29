@@ -5,7 +5,8 @@ const {Schema}=mongoose;
 const theatreSchema=new Schema({
   name:{
     type:String,
-    required:true
+    required:true,
+    minLength:5
   },
   description:String,
   city:{
