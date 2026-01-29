@@ -5,11 +5,13 @@ const {Schema}=mongoose;
 const movieSchema=new Schema({
   name:{
     type:String,
-    required:true
+    required:true,
+    minLength:2
   },
   description:{
     type:String,
-    required:true
+    required:true,
+    minLength:5  //This line I added at the time of validation
   },
   casts:{
     type:[String],//there are more than one casts so we used it array
