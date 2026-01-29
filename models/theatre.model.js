@@ -16,10 +16,6 @@ const theatreSchema=new Schema({
     type:Number,
     required:true
   },
-  director:{
-    type:String,
-    required:true
-  },
   address:String 
 },{timestamps:true});  //In this remember that whenver we create the document so it will give created and updated at
 
