@@ -91,6 +91,7 @@ const getAllTheatre=async(data)=>{
   // }
   try {
     let query={};
+    let pagination={};
     if(data &&  data.city){
       //this check whether the city is present in the query params or not
       query.city=data.city;
@@ -101,9 +102,30 @@ const getAllTheatre=async(data)=>{
     }
     if(data && data.name){
       //this check whether the name is present in the query params or not
-      query.pincode=data.name;
+      query.pincode=data.pincode;
     }
-    const response=await Theatre.find(query);
+
+
+    //It is used to show the first recorda that we have set like 5
+    //So it will show first 5 records
+    if(data && data.limit){
+      pagination.limit=data.limit;
+    }
+
+    //Now suppose we want to skip start 5 records and show next 5 records on next page so skip is used 
+    if(data && data.skip){
+      let perPage=(data.limit)?data.limit:3;
+      pagination.skip=data.skip*perPage;
+    }
+
+    //Before
+    // const response=await Theatre.find(query);
+
+    //After applying pagination concept
+    // console.log("Query:", query);
+    // console.log("Pagination:", pagination);
+
+    const response=await Theatre.find(query,{},pagination);
     return response;
   } catch (error) {
     console.log(error);
