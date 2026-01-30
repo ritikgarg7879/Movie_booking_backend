@@ -164,4 +164,57 @@ const updateTheatre=async(id,data)=>{
   }
 }
 
-module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre};
+/**
+ * 
+ * @param  theatreId -> UNique id of theatre fro which we want to update movies
+ * @param  movieIds ->array of movie ids that are expected to be updated in theatre
+ * @param  insert -> booolean that tells whether we want insert movies or remove them
+ * @returns  -> updated theatre objects
+ */
+
+
+
+const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
+
+  const theatre=await Theatre.findById(theatreId);
+  if(!theatre){
+    return {
+      err:"No such theatre found for the id provided",
+      code:404
+    };
+  }
+ 
+  if (insert) {
+    // ADD movies
+    movieIds.forEach(movieId => {
+      if (!theatre.movies.includes(movieId)) {
+        theatre.movies.push(movieId);
+      }
+    });
+  } else {
+    // REMOVE movies ✅✅
+    theatre.movies = theatre.movies.filter(
+      existingMovieId =>
+        !movieIds.includes(existingMovieId.toString())
+    );
+  }
+
+  await theatre.save();
+  return theatre.populate('movies');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMoviesInTheatres};

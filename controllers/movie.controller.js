@@ -50,7 +50,7 @@ const createMovie= async(req,res)=>{
         errorResponseBody.message="Validation failed on few parameters on the request body"
         return res.status(response.code).json(errorResponseBody);
       }
-      successResponseBody.data=movie;
+      successResponseBody.data=response;
       successResponseBody.message="Successfully created the movie";
 
       return res.status(201).json(successResponseBody)

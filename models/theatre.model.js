@@ -17,8 +17,17 @@ const theatreSchema=new Schema({
     type:Number,
     required:true
   },
-  address:String 
-},{timestamps:true});  //In this remember that whenver we create the document so it will give created and updated at
+  address:String,
+
+
+  //These is the feature to add array of movies in the theatre 
+  movies:{
+    type: [mongoose.Schema.Types.ObjectId],
+    ref:'Movie'
+  }
+
+
+},{timestamps:true});  //In this remember that whenever we create the document so it will give created and updated at
 
 const Theatre= mongoose.model('Theatre',theatreSchema);  //creates the new model
 module.exports=Theatre  //return the model
