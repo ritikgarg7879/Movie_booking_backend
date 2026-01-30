@@ -57,4 +57,15 @@ const getTheatre=async(id)=>{
   
 }
 
-module.exports={createTheatre,deleteTheatre,getTheatre};
+const getAllTheatre=async()=>{
+  try {
+    const response=await Theatre.find({});
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre};
