@@ -21,6 +21,11 @@ const routes=(app)=>{
 
   //UPDATE
   app.patch('/mba/api/v1/theatres/:theatreId',theatreController.updateTheatre);
+
+  //UPDATE
+  app.patch('/mba/api/v1/theatres/:id/movies',theatreMiddlewares.validateUpdateMoviesRequest,theatreController.updateMovies);
+
+
 }
 
 module.exports=routes
