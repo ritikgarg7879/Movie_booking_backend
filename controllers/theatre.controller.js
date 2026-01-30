@@ -1,6 +1,8 @@
 const theatreService=require('../services/theatre.service');
 const {successResponseBody,errorResponseBody}=require('../utils/responsebody');
 
+
+
 const createTheatre=async(req,res)=>{
   try{
     const response= await theatreService.createTheatre(req.body);
@@ -18,6 +20,7 @@ const createTheatre=async(req,res)=>{
   }
 }
 
+
 const deleteTheatre=async(req,res)=>{
   try{
       const response=await theatreService.deleteTheatre(req.params.theatreId);
@@ -33,6 +36,7 @@ const deleteTheatre=async(req,res)=>{
         return res.status(500).json(errorResponseBody)
       }
 }
+
 
 const getTheatre=async(req,res)=>{
   try {
@@ -53,7 +57,7 @@ const getTheatre=async(req,res)=>{
 
 const getAllTheatre=async(req,res)=>{
     try {
-      const response=await theatreService.getAllTheatre();
+      const response=await theatreService.getAllTheatre(req.query);
       if(response.err){
       errorResponseBody.err=response.err;
       return res.status(response.code).json(errorResponseBody);
@@ -68,6 +72,24 @@ const getAllTheatre=async(req,res)=>{
 }
 
 
+const updateTheatre=async(req,res)=>{
+  try{
+    const response=await theatreService.updateTheatre(req.params.theatreId,req.body);
+     if(response.err){
+        errorResponseBody.err=response.err;
+        errorResponseBody.message="The updates that we are trying to apply doesn't validate the schema"
+        return res.status(response.code).json(errorResponseBody);
+      }
+    successResponseBody.data=response;
+    successResponseBody.message="Successfully updated the theatre";
+    return res.status(200).json(successResponseBody);
+  }
+  catch(err){
+    console.log(err);
+    errorResponseBody.err=err;
+    return res.status(500).json(errorResponseBody);
+  }
+}
 
 
-module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre}
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre}

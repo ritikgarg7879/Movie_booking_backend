@@ -11,23 +11,23 @@ const TheatreRoutes=require('./routes/theatre.routes')
 env.config();
 const app=express();
 
+//configuring body parser
 app.use(bodyParser.urlencoded({
   extended:true
 }));
-
 app.use(bodyParser.json())
 
 MovieRoutes(app);  //Invoking movie routes
 TheatreRoutes(app);  //Invoking movie routes
 
 
-app.get("/home",(req,res)=>{
-  console.log("Hitting home");
- return res.json({
-    success:true,
-    message:"Fetched home"
-  });
-});
+// app.get("/home",(req,res)=>{
+//   console.log("Hitting home");
+//  return res.json({
+//     success:true,
+//     message:"Fetched home"
+//   });
+// });
 
 
 
