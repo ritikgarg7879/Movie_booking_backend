@@ -17,6 +17,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json())
 
+mongoose.set('debug',true);
+
 MovieRoutes(app);  //Invoking movie routes
 TheatreRoutes(app);  //Invoking movie routes
 
