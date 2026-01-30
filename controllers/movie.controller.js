@@ -61,6 +61,7 @@ const createMovie= async(req,res)=>{
     }
 }
 
+
 //Controller function to delete movie
 const deleteMovie=async(req,res)=>{
   // try{
@@ -100,6 +101,7 @@ const deleteMovie=async(req,res)=>{
     }
 }
 
+
 const getMovie=async(req,res)=>{
   // try{
   //   const movie=await Movie.findById(req.params.movieId);
@@ -136,6 +138,8 @@ const getMovie=async(req,res)=>{
   }
 }
 
+
+
 const updateMovie=async(req,res)=>{
   try{
     const response=await movieService.updateMovie(req.params.movieId,req.body);
@@ -152,8 +156,8 @@ const updateMovie=async(req,res)=>{
     errorResponseBody.err=err;
     return res.status(500).json(errorResponseBody);
   }
-
 }
+
 
 
 const getMovies= async(req,res)=>{
@@ -171,5 +175,7 @@ const getMovies= async(req,res)=>{
     return res.status(500).json(errorResponseBody);
   }
 }
+
+
 
 module.exports={createMovie,deleteMovie,getMovie,updateMovie,getMovies}
