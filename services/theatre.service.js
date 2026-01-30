@@ -105,6 +105,10 @@ const getAllTheatre=async(data)=>{
       query.pincode=data.pincode;
     }
 
+    if(data && data.movieId){
+     // let movie=await Movie.findById(data.movieId);
+      query.movies={$all:data.movieId};
+    }
 
     //It is used to show the first recorda that we have set like 5
     //So it will show first 5 records
@@ -176,31 +180,92 @@ const updateTheatre=async(id,data)=>{
 
 const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
 
-  const theatre=await Theatre.findById(theatreId);
-  if(!theatre){
-    return {
-      err:"No such theatre found for the id provided",
-      code:404
-    };
-  }
+  // const theatre=await Theatre.findById(theatreId);
+  // if(!theatre){
+  //   return {
+  //     err:"No such theatre found for the id provided",
+  //     code:404
+  //   };
+  // }
  
-  if (insert) {
-    // ADD movies
-    movieIds.forEach(movieId => {
-      if (!theatre.movies.includes(movieId)) {
-        theatre.movies.push(movieId);
-      }
-    });
-  } else {
-    // REMOVE movies ✅✅
-    theatre.movies = theatre.movies.filter(
-      existingMovieId =>
-        !movieIds.includes(existingMovieId.toString())
-    );
-  }
+  // if (insert) {
+  //   // ADD movies
+  //   movieIds.forEach(movieId => {
+  //     if (!theatre.movies.includes(movieId)) {
+  //       theatre.movies.push(movieId);
+  //     }
+  //   });
+  // } else {
+  //   // REMOVE movies 
+  //   theatre.movies = theatre.movies.filter(
+  //     existingMovieId =>
+  //       !movieIds.includes(existingMovieId.toString())
+  //   );
 
-  await theatre.save();
-  return theatre.populate('movies');
+  // }
+
+  //   const theatre=await Theatre.findById(theatreId);
+  //   return theatre.populate('movies');
+
+  // await theatre.save();
+  // return theatre.populate('movies');
+
+
+  // The problem with above functionality is they are adding same movie more than one time
+
+    try{
+    // if(insert){
+    //   //we need to add movie
+    //   await Theatre.updateOne(
+    //     {_id: theatreId},
+    //     {$addToSet:{movies:{$each: movieIds}}}
+    //   );
+    // }else{
+    //   //we need to remove movie
+    //   await Theatre.updateOne(
+    //     {_id: theatreId},
+    //     {$pull:{movies:{$in:movieIds}}}
+    //   );
+    // }
+    // const theatre=await Theatre.findById(theatreId);
+    // return theatre.populate('movies');
+
+    //Problem with above is it is correct no problem
+    //We are just reducing function call of theatre.
+    //As well as updateOne doesn't return you the updated object
+    //while findById return us the updated object
+    //so we also including new so we get updated object instead of old object
+
+    let theatre;
+    if(insert){
+      //we need to add movie  
+      theatre = await Theatre.findByIdAndUpdate(
+        {_id: theatreId},
+        {$addToSet:{movies:{$each: movieIds}}},
+        {new:true}
+      );
+    }else{
+      //we need to remove movie
+      theatre=await Theatre.findByIdAndUpdate(
+        {_id: theatreId},
+        {$pull:{movies:{$in:movieIds}}},
+        {new:true}
+      );
+    }
+
+    return theatre.populate('movies');
+
+  }
+  catch(error){
+    if(error.name=="TypeError"){
+      return {
+        code:404,
+        err:"No theatre found for the given id"
+      }
+    }
+    console.log("Error is",error);
+    throw error;
+  }
 }
 
 
