@@ -22,8 +22,20 @@ const createMovie=async(data)=>{
 }
 
 const deleteMovie=async(id)=>{
-  const movie=await Movie.findByIdAndDelete(id)
-  return movie;
+  try {
+    const movie=await Movie.findByIdAndDelete(id);
+    if(!response){
+      return {
+        err:"No movie record found for the id provided",
+        code:404
+      }
+    }
+    return movie;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+  
 }
 
 
