@@ -81,6 +81,7 @@ const updateTheatre=async(req,res)=>{
         return res.status(response.code).json(errorResponseBody);
       }
     successResponseBody.data=response;
+    successResponseBody.message="Successfully updated the theatre";
     return res.status(200).json(successResponseBody);
   }
   catch(err){
