@@ -28,6 +28,9 @@ const routes=(app)=>{
   //READ
   app.get('/mba/api/v1/theatres/:id/movies',theatreController.getMoviesInATheatre);
 
+  //READ
+  app.get('/mba/api/v1/theatres/:theatreId/movies/:movieId',theatreController.checkMovieInATheatre);
+
 
 }
 
