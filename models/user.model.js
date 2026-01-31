@@ -70,5 +70,19 @@ userSchema.pre('save',async function (next){
 
 });
 
+
+/**
+ * This is going to be an instance mehtod for the user to compare a password
+ * with the stored encrypted password
+ * @param plainPassword -> input password given by the user in sign in request
+ * @returns -> boolean denoting whether password are same or not
+ */
+
+userSchema.methods.isValidPassword=async(plainPassword)=>{
+  const currentUser=this;
+  const compare= await bcrypt.compare(plainPassword,currentUser.password);
+  return compare
+}
+
 const User=mongoose.model('User',userSchema);
 module.exports=User;
