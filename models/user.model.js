@@ -78,10 +78,10 @@ userSchema.pre('save',async function (next){
  * @returns -> boolean denoting whether password are same or not
  */
 
-userSchema.methods.isValidPassword=async(plainPassword)=>{
+userSchema.methods.isValidPassword=async function(plainPassword){
   const currentUser=this;
   const compare= await bcrypt.compare(plainPassword,currentUser.password);
-  return compare
+  return compare;
 }
 
 const User=mongoose.model('User',userSchema);

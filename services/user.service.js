@@ -5,14 +5,14 @@ const createUser=async(data)=>{
   try {
 
     if(!data.userRole || data.userRole == USER_ROLE.customer){
-      if(data.userStatus || data.userStatus != USER_STATUS.approved){
+      if(data.userStatus && data.userStatus != USER_STATUS.approved){
         throw {
           err:"We cannot set another status for customer",
           code:400
         };
       }
     }
-    if(data.userRole || data.userRole != USER_ROLE.customer){
+    if(data.userRole && data.userRole != USER_ROLE.customer){
       data.userStatus=USER_STATUS.pending;
     }
     const response=await User.create(data);
@@ -31,6 +31,26 @@ const createUser=async(data)=>{
   }
 }
 
+const getUserByEmail=async(email)=>{
+  try {
+    const response=await User.findOne({
+      email:email
+    })
+    if(!response){
+      throw {
+        err:"No user found for the given email",
+        code:404
+      }
+    }
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+
 module.exports={
-  createUser
+  createUser,
+  getUserByEmail
 }
