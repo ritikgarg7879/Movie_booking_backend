@@ -270,16 +270,28 @@ const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
 
 
 
+const getMoviesInATheatre=async(id)=>{
+  try{
+    //So with the help of this when we type thetare id so we will get all the movie id in that theatre
+    //and with the help of populate we will get all the movies detail in particular theatre
+    //with the help of this we are getting complete movie object
+
+    
+    const theatre=await Theatre.findById(id,{name:1,movies:1,address:1}).populate('movies'); 
+    if(!theatre){
+      return{
+        err:"No theatre with the given id found",
+        code:404
+      }
+    }
+    return theatre;
+  }catch(error){
+    console.log(error);
+    throw error;
+  }
+}
 
 
 
 
-
-
-
-
-
-
-
-
-module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMoviesInTheatres};
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMoviesInTheatres,getMoviesInATheatre};
