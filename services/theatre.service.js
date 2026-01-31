@@ -105,6 +105,7 @@ const getAllTheatre=async(data)=>{
       query.pincode=data.pincode;
     }
 
+    //IN this we pass the movieId and we are trying to get all the theatre in which particular movieId is present is getting listed
     if(data && data.movieId){
      // let movie=await Movie.findById(data.movieId);
       query.movies={$all:data.movieId};
@@ -178,6 +179,7 @@ const updateTheatre=async(id,data)=>{
 
 
 
+//Function to add and delete movie in a theatre
 const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
 
   // const theatre=await Theatre.findById(theatreId);
@@ -270,13 +272,14 @@ const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
 
 
 
+//In this we are trying to get all movies in particular theatre
 const getMoviesInATheatre=async(id)=>{
   try{
     //So with the help of this when we type thetare id so we will get all the movie id in that theatre
     //and with the help of populate we will get all the movies detail in particular theatre
     //with the help of this we are getting complete movie object
 
-    
+
     const theatre=await Theatre.findById(id,{name:1,movies:1,address:1}).populate('movies'); 
     if(!theatre){
       return{
@@ -291,7 +294,24 @@ const getMoviesInATheatre=async(id)=>{
   }
 }
 
+//Check movie in a theatre
+const checkMovieInATheatre=async(theatreId,movieId)=>{
+  try {
+    let theatre=await Theatre.findById(theatreId);
+    if(!theatre){
+      return {
+        err:"No such theatre found for the given Id",
+        code:404
+      };
+    }
+    return theatre.movies.includes(movieId);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 
 
-module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMoviesInTheatres,getMoviesInATheatre};
+
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMoviesInTheatres,getMoviesInATheatre,checkMovieInATheatre};

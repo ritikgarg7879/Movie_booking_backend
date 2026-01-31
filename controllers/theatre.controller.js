@@ -115,7 +115,7 @@ const updateMovies=async(req,res)=>{
 
 const getMoviesInATheatre=async(req,res)=>{
   try {
-     const response=await theatreService.getMoviesInATheatreres(
+     const response=await theatreService.getMoviesInATheatre(
       req.params.id,
     );
     if(response.err){
@@ -131,4 +131,24 @@ const getMoviesInATheatre=async(req,res)=>{
   }
 }
 
-module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMovies,getMoviesInATheatre}
+
+const checkMovieInATheatre= async(req,res)=>{
+  try {
+     const response=await theatreService.checkMovieInATheatre(
+      req.params.theatreId,
+      req.params.movieId
+    );
+    if(response.err){
+      errorResponseBody.err=response.err;
+      return res.status(response.code).json(errorResponseBody);
+    }
+      successResponseBody.data=response;
+      successResponseBody.message="Successfully checked if movie is present in a theatre";
+      return res.status(200).json(successResponseBody);
+  }  catch (error) {
+    errorResponseBody.err=error;
+    return res.status(500).json(errorResponseBody);
+  }
+}
+
+module.exports={createTheatre,deleteTheatre,getTheatre,getAllTheatre,updateTheatre,updateMovies,getMoviesInATheatre,checkMovieInATheatre}
