@@ -24,9 +24,7 @@ const createMovie=async(data)=>{
     }else{
       throw error;
     }
-   
   }
-  
 }
 
 /**
@@ -67,7 +65,7 @@ const getMovieById=async(id)=>{
     throw {
       err:"No movie found for the corresponding id provided",
       code:STATUS.NOT_FOUND,
-      message:"Something went wrong,unable to fetch the movie",
+      message:"Something went wrong, unable to fetch the movie",
       data:{}
     }
   };

@@ -114,7 +114,7 @@ const getAllTheatre=async(data)=>{
       query.movies={$all:data.movieId};
     }
 
-    //It is used to show the first recorda that we have set like 5
+    //It is used to show the first record that we have set like 5
     //So it will show first 5 records
     if(data && data.limit){
       pagination.limit=data.limit;
@@ -176,9 +176,9 @@ const updateTheatre=async(id,data)=>{
 
 /**
  * 
- * @param  theatreId -> UNique id of theatre fro which we want to update movies
+ * @param  theatreId -> Unique id of theatre for which we want to update movies
  * @param  movieIds ->array of movie ids that are expected to be updated in theatre
- * @param  insert -> booolean that tells whether we want insert movies or remove them
+ * @param  insert -> boolean that tells whether we want insert movies or remove them
  * @returns  -> updated theatre objects
  */
 
@@ -280,7 +280,7 @@ const updateMoviesInTheatres=async(theatreId,movieIds,insert)=>{
 //In this we are trying to get all movies in particular theatre
 const getMoviesInATheatre=async(id)=>{
   try{
-    //So with the help of this when we type thetare id so we will get all the movie id in that theatre
+    //So with the help of this when we type theatre id so we will get all the movie id in that theatre
     //and with the help of populate we will get all the movies detail in particular theatre
     //with the help of this we are getting complete movie object
 

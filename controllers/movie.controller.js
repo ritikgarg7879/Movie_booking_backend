@@ -1,4 +1,4 @@
-const Movie=require('../models/movie.model')
+// const Movie=require('../models/movie.model')
 const movieService=require('../services/movie.service')
 const {successResponseBody,errorResponseBody}=require('../utils/responsebody');
 const { STATUS } = require('../utils/constants');
@@ -49,7 +49,7 @@ const createMovie= async(req,res)=>{
       successResponseBody.message="Successfully created the movie";
       return res.status(STATUS.CREATED).json(successResponseBody)
     }
-    catch(err){
+    catch(error){
       if(error.err){
         errorResponseBody.err=error.err;
         return res.status(error.code).json(errorResponseBody);
@@ -89,7 +89,7 @@ const deleteMovie=async(req,res)=>{
     successResponseBody.data=response;
     successResponseBody.message="Successfully deleted the movie";
     return res.status(STATUS.OK).json(successResponseBody);
-  }catch(err){
+  }catch(error){
       if(error.err){
         errorResponseBody.err=error.err;
         return res.status(error.code).json(errorResponseBody)
@@ -126,7 +126,7 @@ const getMovie=async(req,res)=>{
     successResponseBody.data=response;
     return res.status(STATUS.OK).json(successResponseBody);
   }
-  catch(err){
+  catch(error){
     if(error.err){
       errorResponseBody.err=error.err;
       return res.status(error.code).json(errorResponseBody)
@@ -144,7 +144,7 @@ const updateMovie=async(req,res)=>{
     successResponseBody.data=response;
     return res.status(STATUS.OK).json(successResponseBody);
   }
-  catch(err){
+  catch(error){
     if(error.err){
         errorResponseBody.err=error.err;
         return res.status(error.code).json(errorResponseBody);
@@ -161,8 +161,8 @@ const getMovies= async(req,res)=>{
     const response=await movieService.fetchMovies(req.query);
     successResponseBody.data=response;
     return res.status(STATUS.OK).json(successResponseBody);
-  } catch(err){
-    if(response.err){
+  } catch(error){
+    if(error.err){
       errorResponseBody.err=error.err;
       return res.status(error.code).json(errorResponseBody);
     }

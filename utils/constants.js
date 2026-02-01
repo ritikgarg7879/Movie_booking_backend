@@ -8,7 +8,7 @@ const USER_ROLE={
   customer:"CUSTOMER",
   admin:"ADMIN",
   client:"CLIENT"
-}
+};
 
 const STATUS_CODES={
   OK:200,
@@ -19,10 +19,7 @@ const STATUS_CODES={
   BAD_REQUEST:400,
   FORBIDDEN:403,
   UNPROCESSABLE_ENTITY:422
-}
-
-
-
+};
 
 
 module.exports={

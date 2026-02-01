@@ -6,13 +6,8 @@ const authMiddleWare=require('../middlewares/auth.middlewares');
 const route = (app) => {
 
   //UPDATE
-    app.patch(
-        '/mba/api/v1/user/:id',
-        authMiddleWare.isAuthenticated,
-        userMiddleware.validateUpdateUserRequest,
-        authMiddleWare.isAdmin,
-        userController.update
-    )
+    app.patch('/mba/api/v1/user/:id',authMiddleWare.isAuthenticated,userMiddleware.validateUpdateUserRequest,authMiddleWare.isAdmin,userController.update);
+    
 }
 
 module.exports = route;
