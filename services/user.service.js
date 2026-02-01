@@ -1,5 +1,5 @@
 const User=require('../models/user.model');
-const { USER_ROLE,USER_STATUS }=require('../utils/constants');
+const { USER_ROLE,USER_STATUS,STATUS }=require('../utils/constants');
 
 const createUser=async(data)=>{
   try {
@@ -77,7 +77,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
         if(!response) 
           throw {
           err: 'No user found for the given id', 
-          code: 404
+          code: STATUS.NOT_FOUND
         };
 
         return response;
@@ -90,7 +90,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
             });
             throw {
               err: err,
-               code: 400
+               code: STATUS.BAD_REQUEST
             };
         }
         throw error;
