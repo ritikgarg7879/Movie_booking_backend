@@ -90,7 +90,7 @@ const isAuthenticated= async(req,res,next) =>{
       return res.status(401).json(badRequestResponse);
     }
     if(error.code==404){
-      badRequestResponse.err="User doesn't existI ";
+      badRequestResponse.err="User doesn't exist ";
       return res.status(error.code).json(badRequestResponse);
     }
     badRequestResponse.err=error;
