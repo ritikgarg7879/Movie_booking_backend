@@ -95,17 +95,16 @@ const updateMovies=async(req,res)=>{
       req.body.movieIds,
       req.body.insert
     );
-    if(response.err){
-      errorResponseBody.err=response.err;
-      return res.status(response.code).json(errorResponseBody);
-    }
       successResponseBody.data=response;
       successResponseBody.message="Successfully updated the movies in the theatre";
-      return res.status(200).json(successResponseBody);
+      return res.status(STATUS.OK).json(successResponseBody);
   } catch (error) {
-    console.log(error);
-    errorResponseBody.err=error;
-    return res.status(500).json(errorResponseBody);
+    if(error.err){
+      errorResponseBody.err=error.err;
+      return res.status(error.code).json(errorResponseBody);
+    }
+    errorResponseBody.err=error.err;
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
   }
 }
 
@@ -115,16 +114,16 @@ const getMoviesInATheatre=async(req,res)=>{
      const response=await theatreService.getMoviesInATheatre(
       req.params.id,
     );
-    if(response.err){
-      errorResponseBody.err=response.err;
-      return res.status(response.code).json(errorResponseBody);
-    }
       successResponseBody.data=response;
       successResponseBody.message="Successfully fetched the movies for the theatre";
-      return res.status(200).json(successResponseBody);
+      return res.status(STATUS.OK).json(successResponseBody);
   } catch (error) {
-    errorResponseBody.err=error;
-    return res.status(500).json(errorResponseBody);
+     if(error.err){
+      errorResponseBody.err=error.err;
+      return res.status(error.code).json(errorResponseBody);
+    }
+    errorResponseBody.err=error.err;
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
   }
 }
 
@@ -135,16 +134,16 @@ const checkMovieInATheatre= async(req,res)=>{
       req.params.theatreId,
       req.params.movieId
     );
-    if(response.err){
-      errorResponseBody.err=response.err;
-      return res.status(response.code).json(errorResponseBody);
-    }
       successResponseBody.data=response;
       successResponseBody.message="Successfully checked if movie is present in a theatre";
-      return res.status(200).json(successResponseBody);
+      return res.status(STATUS.OK).json(successResponseBody);
   }  catch (error) {
-    errorResponseBody.err=error;
-    return res.status(500).json(errorResponseBody);
+     if(error.err){
+      errorResponseBody.err=error.err;
+      return res.status(error.code).json(errorResponseBody);
+    }
+    errorResponseBody.err=error.err;
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
   }
 }
 
