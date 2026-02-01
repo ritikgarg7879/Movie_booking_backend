@@ -8,6 +8,7 @@ const mongoose=require('mongoose');
 const MovieRoutes=require('./routes/movie.routes')
 const TheatreRoutes=require('./routes/theatre.routes')
 const AuthRoutes=require('./routes/auth.routes')
+const UserRoutes=require('./routes/user.routes')
 
 env.config();
 const app=express();
@@ -23,6 +24,7 @@ mongoose.set('debug',true);
 MovieRoutes(app);  //Invoking movie routes
 TheatreRoutes(app);  //Invoking movie routes
 AuthRoutes(app);    //Invoking auth routes
+UserRoutes(app);   //Invoking user routes
 
 
 // app.get("/home",(req,res)=>{
