@@ -9,7 +9,7 @@ const routes=(app)=>{
   app.post('/mba/api/v1/theatres',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreMiddlewares.validateTheatreCreateRequest,theatreController.createTheatre);
 
   //DELETE
-  app.delete('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,theatreController.deleteTheatre);
+  app.delete('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreController.deleteTheatre);
 
   //READ
   app.get('/mba/api/v1/theatres/:theatreId',theatreController.getTheatre);
@@ -18,10 +18,10 @@ const routes=(app)=>{
   app.get('/mba/api/v1/theatres',theatreController.getAllTheatre);
 
   //UPDATE
-  app.put('/mba/api/v1/theatres/:theatreId',theatreController.updateTheatre);
+  app.put('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreController.updateTheatre);
 
   //UPDATE
-  app.patch('/mba/api/v1/theatres/:theatreId',theatreController.updateTheatre);
+  app.patch('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreController.updateTheatre);
 
   //UPDATE
   app.patch('/mba/api/v1/theatres/:id/movies',theatreMiddlewares.validateUpdateMoviesRequest,theatreController.updateMovies);
