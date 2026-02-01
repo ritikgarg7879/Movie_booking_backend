@@ -1,5 +1,5 @@
-const authController=require('../controllers/auth.controller')
-const authMiddleWares=require('../middlewares/auth.middlewares')
+const authController=require('../controllers/auth.controller');
+const authMiddleWares=require('../middlewares/auth.middlewares');
 
 const routes=(app)=>{
 

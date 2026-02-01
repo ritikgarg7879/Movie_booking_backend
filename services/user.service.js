@@ -8,7 +8,7 @@ const createUser=async(data)=>{
       if(data.userStatus && data.userStatus != USER_STATUS.approved){
         throw {
           err:"We cannot set another status for customer",
-          code:400
+          code:STATUS.BAD_REQUEST
         };
       }
     }
@@ -25,7 +25,10 @@ const createUser=async(data)=>{
         Object.keys(error.errors).forEach((key)=>{
           err[key]=error.errors[key].message;
         });
-         throw {err:err,code:422};
+         throw {
+          err:err,
+          code:STATUS.UNPROCESSABLE_ENTITY
+        };
       }
       throw error;
   }
@@ -39,7 +42,7 @@ const getUserByEmail=async(email)=>{
     if(!response){
       throw {
         err:"No user found for the given email",
-        code:404
+        code:STATUS.NOT_FOUND
       }
     }
     return response;
@@ -55,7 +58,7 @@ const getUserById=async(id)=>{
       if(!user){
         throw {
           err:"No user found for the given id",
-          code:404
+          code:STATUS.NOT_FOUND
         }
       }
       return user;

@@ -11,10 +11,10 @@ const createTheatre=async(req,res)=>{
     return res.status(STATUS.CREATED).json(successResponseBody);
   }catch(error){
     if(error.err){
-            errorResponseBody.err=response.err;
+            errorResponseBody.err=error.err;
             return res.status(error.code).json(errorResponseBody);
     }
-    errorResponseBody.err=error;
+    errorResponseBody.err=error.err;
     return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody)
   }
 }
@@ -26,12 +26,12 @@ const deleteTheatre=async(req,res)=>{
       successResponseBody.data=response;
       successResponseBody.message="Successfully deleted the given theatre";
       return res.status(STATUS.OK).json(successResponseBody);
-    }catch(err){
+    }catch(error){
       if(error.err){
         errorResponseBody.err=error.err;
-        return res.status(error.code).json(errorResponseBody);
+        return res.status(err.code).json(errorResponseBody);
       }
-        errorResponseBody.err=err;
+        errorResponseBody.err=error.err;
         return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody)
       }
 }
@@ -48,7 +48,7 @@ const getTheatre=async(req,res)=>{
       errorResponseBody.err=error.err;
       return res.status(error.code).json(errorResponseBody);
     }
-    errorResponseBody.err=error;
+    errorResponseBody.err=error.err;
     return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody)
   }
 }
@@ -78,12 +78,12 @@ const updateTheatre=async(req,res)=>{
     successResponseBody.message="Successfully updated the theatre";
     return res.status(STATUS.OK).json(successResponseBody);
   }
-  catch(err){
+  catch(error){
     if(error.err){
         errorResponseBody.err=error.err;
         return res.status(error.code).json(errorResponseBody);
       }
-    errorResponseBody.err=err;
+    errorResponseBody.err=error.err;
     return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody);
   }
 }

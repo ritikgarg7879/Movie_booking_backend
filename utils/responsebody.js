@@ -1,4 +1,3 @@
-
 //These object will be used as template for error responses
 
 const errorResponseBody={

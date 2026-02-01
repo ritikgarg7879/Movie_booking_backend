@@ -24,9 +24,7 @@ const createMovie=async(data)=>{
     }else{
       throw error;
     }
-   
   }
-  
 }
 
 /**
