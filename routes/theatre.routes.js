@@ -20,8 +20,10 @@ const routes=(app)=>{
   //UPDATE
   app.put('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreController.updateTheatre);
 
+
   //UPDATE
   app.patch('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreController.updateTheatre);
+
 
   //UPDATE
   app.patch('/mba/api/v1/theatres/:id/movies',theatreMiddlewares.validateUpdateMoviesRequest,theatreController.updateMovies);

@@ -27,13 +27,13 @@ AuthRoutes(app);    //Invoking auth routes
 UserRoutes(app);   //Invoking user routes
 
 
-// app.get("/home",(req,res)=>{
-//   console.log("Hitting home");
-//  return res.json({
-//     success:true,
-//     message:"Fetched home"
-//   });
-// });
+app.get("/home",(req,res)=>{
+  console.log("Hitting home");
+ return res.json({
+    success:true,
+    message:"Fetched home"
+  });
+});
 
 
 

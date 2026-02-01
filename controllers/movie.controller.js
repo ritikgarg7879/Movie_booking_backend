@@ -1,4 +1,4 @@
-const Movie=require('../models/movie.model')
+// const Movie=require('../models/movie.model')
 const movieService=require('../services/movie.service')
 const {successResponseBody,errorResponseBody}=require('../utils/responsebody');
 const { STATUS } = require('../utils/constants');
@@ -162,7 +162,7 @@ const getMovies= async(req,res)=>{
     successResponseBody.data=response;
     return res.status(STATUS.OK).json(successResponseBody);
   } catch(error){
-    if(response.err){
+    if(error.err){
       errorResponseBody.err=error.err;
       return res.status(error.code).json(errorResponseBody);
     }
