@@ -10,7 +10,7 @@ const routes=(app)=>{
   app.post('/mba/api/v1/movies',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,MovieMiddlewares.validateMovieCreateRequest,MovieController.createMovie);
   
   //DELETE
-  app.delete('/mba/api/v1/movies/:movieId',MovieController.deleteMovie);
+  app.delete('/mba/api/v1/movies/:movieId',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,MovieController.deleteMovie);
   
   //READ
   app.get('/mba/api/v1/movies/:movieId',MovieController.getMovie);  

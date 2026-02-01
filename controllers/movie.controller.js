@@ -1,7 +1,7 @@
 const Movie=require('../models/movie.model')
 const movieService=require('../services/movie.service')
 const {successResponseBody,errorResponseBody}=require('../utils/responsebody');
-
+const { STATUS } = require('../utils/constants');
 
 // const errorResponseBody={
 //   err:{},
@@ -45,19 +45,17 @@ const createMovie= async(req,res)=>{
     try{
       // const movie= await Movie.create(req.body);
       const response= await movieService.createMovie(req.body);
-      if(response.err){
-        errorResponseBody.err=response.err;
-        errorResponseBody.message="Validation failed on few parameters on the request body"
-        return res.status(response.code).json(errorResponseBody);
-      }
       successResponseBody.data=response;
       successResponseBody.message="Successfully created the movie";
-
-      return res.status(201).json(successResponseBody)
+      return res.status(STATUS.CREATED).json(successResponseBody)
     }
     catch(err){
-      console.log(err);
-      return res.status(500).json(errorResponseBody)
+      if(error.err){
+        errorResponseBody.err=error.err;
+        return res.status(error.code).json(errorResponseBody);
+      }
+      errorResponseBody.err=error.err;
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody)
     }
 }
 
@@ -88,16 +86,16 @@ const deleteMovie=async(req,res)=>{
     //   _id:req.params.movieId
     // });
     const response=await movieService.deleteMovie(req.params.movieId);
-    if(response.err){
-      errorResponseBody.err=response.err;
-      return res.status(response.code).json(errorResponseBody)
-    }
     successResponseBody.data=response;
     successResponseBody.message="Successfully deleted the movie";
-    return res.status(200).json(successResponseBody);
+    return res.status(STATUS.OK).json(successResponseBody);
   }catch(err){
-      console.log(err);
-      return res.status(500).json(errorResponseBody)
+      if(error.err){
+        errorResponseBody.err=error.err;
+        return res.status(error.code).json(errorResponseBody)
+      }
+      errorResponseBody.err=error.err;
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json(errorResponseBody)
     }
 }
 

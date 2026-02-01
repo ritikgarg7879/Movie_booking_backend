@@ -1,5 +1,5 @@
-const Movie=require('../models/movie.model')
-
+const Movie=require('../models/movie.model');
+const {STATUS}=require('../utils/constants');
 
 /**
  * 
@@ -17,10 +17,12 @@ const createMovie=async(data)=>{
         Object.keys(error.errors).forEach((key)=>{
           err[key]=error.errors[key].message;
         });
-        return {err:err,code:422};
+        throw {
+          err:err,
+          code:STATUS.UNPROCESSABLE_ENTITY
+        }
     }else{
-        console.log(err);
-        throw error;
+      throw error;
     }
    
   }
@@ -37,14 +39,14 @@ const createMovie=async(data)=>{
 
 const deleteMovie=async(id)=>{
   try {
-    const movie=await Movie.findByIdAndDelete(id);
+    const response=await Movie.findByIdAndDelete(id);
     if(!response){
-      return {
+      throw {
         err:"No movie record found for the id provided",
-        code:404
+        code:STATUS.NOT_FOUND
       }
     }
-    return movie;
+    return response;
   } catch (error) {
     console.log(error);
     throw error;
