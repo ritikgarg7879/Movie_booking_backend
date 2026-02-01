@@ -7,6 +7,7 @@ const badRequestResponse={
 
 const jwt = require('jsonwebtoken');
 const userService=require('../services/user.service');
+const { USER_ROLE } = require('../utils/constants');
 
 /**
  * 
@@ -99,5 +100,53 @@ const isAuthenticated= async(req,res,next) =>{
   
 }
 
-module.exports={validateSignupRequest,validateSigninRequest,isAuthenticated};
+const validateResetPasswordRequest = (req, res, next) => {
+    // validate old password presence
+    if(!req.body.oldPassword) {
+        badRequestResponse.err = 'Missing the old password in the request';
+        return res.status(400).json(badRequestResponse);
+    }
+
+    // validate new password presence
+    if(!req.body.newPassword) {
+        badRequestResponse.err = 'Missing the new password in the request';
+        return res.status(500).json(badRequestResponse);
+    }
+
+    // we can proceed
+    next();
+}
+
+
+const isAdmin = async (req, res, next) => {
+    console.log(req.user);
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.admin) {
+        badRequestResponse.err = "User is not an admin, cannot proceed with the request"
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
+const isClient = async (req, res, next) => {
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.client) {
+        badRequestResponse.err = "User is not a client, cannot proceed with the request";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
+const isAdminOrClient = async (req, res, next) => {
+    const user = await userService.getUserById(req.user);
+    if(user.userRole != USER_ROLE.admin && user.userRole != USER_ROLE.client) {
+        badRequestResponse.err = "User is neither a client not an admin, cannot proceed with the request";
+        return res.status(401).json(badRequestResponse);
+    }
+    next();
+}
+
+
+
+module.exports={validateSignupRequest,validateSigninRequest,isAuthenticated,validateResetPasswordRequest,isAdmin,isClient,isAdminOrClient};
 

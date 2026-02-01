@@ -77,7 +77,7 @@ const updateUserRoleOrStatus = async (data, userId) => {
         if(!response) 
           throw {
           err: 'No user found for the given id', 
-          code: STATUS.NOT_FOUND
+          code: 404
         };
 
         return response;
@@ -88,7 +88,10 @@ const updateUserRoleOrStatus = async (data, userId) => {
             Object.keys(error.errors).forEach(key => {
                 err[key] = error.errors[key].message;
             });
-            throw {err: err, code: STATUS.BAD_REQUEST};
+            throw {
+              err: err,
+               code: 400
+            };
         }
         throw error;
     }

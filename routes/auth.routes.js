@@ -10,7 +10,7 @@ const routes=(app)=>{
   app.post('/mba/api/v1/auth/signin',authMiddleWares.validateSigninRequest,authController.signin);
 
   //UPDATE
-  app.patch('/mba/api/v1/auth/reset',authMiddleWares.isAuthenticated,authController.resetPassword);
+  app.patch('/mba/api/v1/auth/reset',authMiddleWares.isAuthenticated,authMiddleWares.validateResetPasswordRequest,authController.resetPassword);
 
 }
 
