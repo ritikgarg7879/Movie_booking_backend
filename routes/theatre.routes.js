@@ -6,7 +6,7 @@ const routes=(app)=>{
   //route function takes express app object as parameter
 
   //CREATE
-  app.post('/mba/api/v1/theatres',theatreMiddlewares.validateTheatreCreateRequest,theatreController.createTheatre);
+  app.post('/mba/api/v1/theatres',authMiddleWares.isAuthenticated,authMiddleWares.isAdminOrClient,theatreMiddlewares.validateTheatreCreateRequest,theatreController.createTheatre);
 
   //DELETE
   app.delete('/mba/api/v1/theatres/:theatreId',authMiddleWares.isAuthenticated,theatreController.deleteTheatre);
