@@ -10,6 +10,8 @@ const TheatreRoutes=require('./routes/theatre.routes')
 const AuthRoutes=require('./routes/auth.routes')
 const UserRoutes=require('./routes/user.routes')
 const BookingRoutes=require('./routes/booking.routes')
+const ShowRoutes=require('./routes/show.routes');
+
 
 env.config();
 const app=express();
@@ -27,6 +29,7 @@ TheatreRoutes(app);  //Invoking movie routes
 AuthRoutes(app);    //Invoking auth routes
 UserRoutes(app);   //Invoking user routes
 BookingRoutes(app);  //Invoking booking routes
+ShowRoutes(app);  //Invoking show routes
 
 
 app.get("/home",(req,res)=>{
