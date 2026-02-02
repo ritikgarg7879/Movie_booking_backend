@@ -22,8 +22,17 @@ const STATUS_CODES={
 };
 
 
+const BOOKING_STATUS = {
+    cancelled: "CANCELLED",
+    successfull: "SUCCESSFULL",
+    processing: "IN_PROCESS",
+    expired: "EXPIRED"
+}
+
+
 module.exports={
   USER_ROLE,
+  BOOKING_STATUS,
   USER_STATUS,
   STATUS:STATUS_CODES
 }
