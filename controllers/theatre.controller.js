@@ -6,9 +6,14 @@ const sendMail=require('../services/email.service')
 
 const createTheatre=async(req,res)=>{
   try{
-    const response= await theatreService.createTheatre(req.body);
+    const response= await theatreService.createTheatre({...req.body,owner:req.user});
     successResponseBody.data=response;
     successResponseBody.message="Successfully created the theatre"
+    sendMail(
+                'Successfully created the theatre', 
+                req.user,
+                `Your have successfully created the theatre`
+            );
     return res.status(STATUS.CREATED).json(successResponseBody);
   }catch(error){
     if(error.err){

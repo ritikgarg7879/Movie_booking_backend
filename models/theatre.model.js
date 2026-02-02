@@ -18,7 +18,11 @@ const theatreSchema=new Schema({
     required:true
   },
   address:String,
-
+  owner:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'User',
+    required:true
+  },
   //These is the feature to add array of movies in the theatre 
   movies:{
     type: [mongoose.Schema.Types.ObjectId],
