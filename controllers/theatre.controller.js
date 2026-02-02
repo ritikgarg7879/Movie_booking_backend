@@ -1,6 +1,7 @@
 const theatreService=require('../services/theatre.service');
 const {successResponseBody,errorResponseBody}=require('../utils/responsebody');
 const {STATUS}=require('../utils/constants');
+const sendMail=require('../services/email.service')
 
 
 const createTheatre=async(req,res)=>{

@@ -1,11 +1,22 @@
 const Booking=require('../models/booking.model');
 const {STATUS}=require('../utils/constants');
+const Show = require('../models/show.model');
+
 
 
 const createBooking=async(data)=>{
   try {
-    const response=await Booking.create(data);
-    return response;
+        const show = await Show.findOne({
+            movieId: data.movieId, 
+            theatreId: data.theatreId, 
+            _id: data.showId
+        });
+        console.log(data);
+        console.log(show.price, data.noOfSeats);
+        data.totalCost = data.noOfSeats*show.price;
+        const response = await Booking.create(data);
+        await show.save();
+        return response.populate('movieId theatreId');
   } catch (error) {
     console.log(error);
     if(error.name == 'ValidationError'){
