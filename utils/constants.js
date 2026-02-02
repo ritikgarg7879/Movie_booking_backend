@@ -29,10 +29,17 @@ const BOOKING_STATUS = {
     expired: "EXPIRED"
 }
 
+const PAYMENT_STATUS = {
+    failed: "FAILED",
+    success: "SUCCESS",
+    pending: "PENDING"
+}
+
 
 module.exports={
   USER_ROLE,
   BOOKING_STATUS,
   USER_STATUS,
+  PAYMENT_STATUS,
   STATUS:STATUS_CODES
 }
