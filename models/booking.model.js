@@ -26,10 +26,10 @@ const bookingSchema = new Schema({
         type: Number,
         required: true,
     },
-    // totalCost: {
-    //     type: Number,
-    //     required: true
-    // },
+    totalCost: {
+        type: Number,
+        required: true
+    },
     status: {
         type: String,
         required: true,

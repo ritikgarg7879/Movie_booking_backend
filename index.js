@@ -5,13 +5,13 @@ const mongoose=require('mongoose');
 
 // const Movie = require('./models/movie.model');
 
-const MovieRoutes=require('./routes/movie.routes')
-const TheatreRoutes=require('./routes/theatre.routes')
-const AuthRoutes=require('./routes/auth.routes')
-const UserRoutes=require('./routes/user.routes')
-const BookingRoutes=require('./routes/booking.routes')
+const MovieRoutes=require('./routes/movie.routes');
+const TheatreRoutes=require('./routes/theatre.routes');
+const AuthRoutes=require('./routes/auth.routes');
+const UserRoutes=require('./routes/user.routes');
+const BookingRoutes=require('./routes/booking.routes');
 const ShowRoutes=require('./routes/show.routes');
-
+const PaymentRoutes=require('./routes/payment.routes');
 
 env.config();
 const app=express();
@@ -30,7 +30,7 @@ AuthRoutes(app);    //Invoking auth routes
 UserRoutes(app);   //Invoking user routes
 BookingRoutes(app);  //Invoking booking routes
 ShowRoutes(app);  //Invoking show routes
-
+PaymentRoutes(app); //Invoking payment routes
 
 app.get("/home",(req,res)=>{
   console.log("Hitting home");
