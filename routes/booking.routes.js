@@ -11,6 +11,15 @@ const routes=(app)=>{
   //UPDATE
   app.patch('/mba/api/v1/bookings/:id',authMiddleWare.isAuthenticated,bookingController.updateBooking);
 
+  //READ
+  app.get('/mba/api/v1/bookings',authMiddleWare.isAuthenticated,bookingController.getBookings);
+  
+  //RAED
+  app.get('/mba/api/v1/bookings/all',authMiddleWare.isAuthenticated,authMiddleWare.isAdmin,bookingController.getAllBookings);
+
+  //READ
+  app.get('/mba/api/v1/bookings/:id',authMiddleWare.isAuthenticated,bookingController.getBookingById);
+
 }
 
 module.exports=routes;
