@@ -66,22 +66,34 @@ app.get("/home",(req,res)=>{
 app.listen(process.env.PORT, async () => {
   console.log(`Server is running on ${process.env.PORT}`);
 
-  try {
-    await mongoose.connect(process.env.DB_URL);
-    console.log("Successfully connected to MongoDB");
-    // await Movie.create({
-    //     name:"Bachhan Pandey",
-    //     description:"Comdey masal movie",
-    //     casts:["Akshay Kumar","Kriti Sanon","Jaxqueline Fernandiz"],
-    //     director:"Farhad Samji",
-    //     trailerUrl:"http://bachhanpandey/tarilers/1",
-    //     language:"Hindi",
-    //     relaseDate:"18-03-2022",
-    //     releaseStatus:"RELEASED"
-    // });
+  // try {
+  //   await mongoose.connect(process.env.PROD_DB_URL);
+  //   console.log("Successfully connected to MongoDB");
+  //   // await Movie.create({
+  //   //     name:"Bachhan Pandey",
+  //   //     description:"Comdey masal movie",
+  //   //     casts:["Akshay Kumar","Kriti Sanon","Jaxqueline Fernandiz"],
+  //   //     director:"Farhad Samji",
+  //   //     trailerUrl:"http://bachhanpandey/tarilers/1",
+  //   //     language:"Hindi",
+  //   //     relaseDate:"18-03-2022",
+  //   //     releaseStatus:"RELEASED"
+  //   // });
 
-  } catch (err) {
-    console.log("Error while connecting to MongoDB", err);
+  // } catch (err) {
+  //   console.log("Error while connecting to MongoDB", err);
+  // }
+
+
+   try {
+        if(process.env.NODE_ENV == 'development') {
+            await mongoose.connect(process.env.PROD_DB_URL); // connected to the mongo server
+        } else {
+            await mongoose.connect(process.env.DB_URL); // connected to the mongo server
+        }
+        console.log("Successfully connected to mongo");
+    } catch (err) {
+        console.log("Not able to connect mongo", err);
   }
 });
 
