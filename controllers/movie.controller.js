@@ -124,6 +124,7 @@ const getMovie=async(req,res)=>{
   try{
     const response=await movieService.getMovieById(req.params.movieId);
     successResponseBody.data=response;
+    successResponseBody.message="Successfully fetched the movie";
     return res.status(STATUS.OK).json(successResponseBody);
   }
   catch(error){
@@ -142,6 +143,7 @@ const updateMovie=async(req,res)=>{
   try{
     const response=await movieService.updateMovie(req.params.movieId,req.body);
     successResponseBody.data=response;
+    successResponseBody.message="Successfully updated the movie";
     return res.status(STATUS.OK).json(successResponseBody);
   }
   catch(error){
@@ -160,6 +162,7 @@ const getMovies= async(req,res)=>{
   try{
     const response=await movieService.fetchMovies(req.query);
     successResponseBody.data=response;
+    successResponseBody.message="Successfully fetched the movie";
     return res.status(STATUS.OK).json(successResponseBody);
   } catch(error){
     if(error.err){

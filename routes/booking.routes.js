@@ -14,7 +14,7 @@ const routes=(app)=>{
   //READ
   app.get('/mba/api/v1/bookings',authMiddleWare.isAuthenticated,bookingController.getBookings);
   
-  //RAED
+  //READ
   app.get('/mba/api/v1/bookings/all',authMiddleWare.isAuthenticated,authMiddleWare.isAdmin,bookingController.getAllBookings);
 
   //READ
