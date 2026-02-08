@@ -1,5 +1,6 @@
 const Movie=require('../models/movie.model');
 const {STATUS}=require('../utils/constants');
+const redis = require('../config/redis');
 
 /**
  * 
@@ -121,6 +122,31 @@ const fetchMovies=async(filter)=>{
   }
   return movies;
 }
+
+// const fetchMovies = async (filter) => {
+
+//   const cacheKey = `movies:${JSON.stringify(filter)}`;
+
+//   // 1️⃣ Check Redis
+//   const cachedData = await redis.get(cacheKey);
+//   if (cachedData) {
+//     console.log("⚡ Serving Movies from Cache");
+//     return JSON.parse(cachedData);
+//   }
+
+//   // 2️⃣ If not in cache → fetch from DB
+//   let query = {};
+//   if (filter.name) {
+//     query.name = filter.name;
+//   }
+
+//   const movies = await Movie.find(query);
+
+//   // 3️⃣ Store in Redis (TTL 60 seconds)
+//   await redis.set(cacheKey, JSON.stringify(movies), "EX", 60);
+
+//   return movies;
+// };
 
 
 module.exports={createMovie,getMovieById,deleteMovie,updateMovie,fetchMovies}

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express=require('express');
 const bodyParser=require('body-parser');
 const env=require('dotenv')
@@ -12,6 +13,7 @@ const UserRoutes=require('./routes/user.routes');
 const BookingRoutes=require('./routes/booking.routes');
 const ShowRoutes=require('./routes/show.routes');
 const PaymentRoutes=require('./routes/payment.routes');
+
 
 env.config();
 const app=express();

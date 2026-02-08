@@ -1,6 +1,7 @@
 const Booking=require('../models/booking.model');
 const {STATUS}=require('../utils/constants');
 const Show = require('../models/show.model');
+const redis = require('../config/redis');
 
 
 const createBooking = async (data) => {
@@ -24,8 +25,46 @@ const createBooking = async (data) => {
       };
     }
 
+    // 🔒  LOCK SEATS IN REDIS
+
+    if (!data.seat) {
+      throw {
+        err: "Seat information required",
+        code: STATUS.BAD_REQUEST
+      };
+    }
+
+    const selectedSeats = JSON.parse(data.seat.replaceAll("'", '"'));
+
+    const lockedKeys = []; // store successfully locked seats
+
+    for (let seat of selectedSeats) {
+
+      const lockKey = `lock:show:${data.showId}:row:${seat.rowNumber}:seat:${seat.seatNumber}`;
+
+      // 🔥 ATOMIC LOCK
+      const lock = await redis.set(lockKey, data.userId, "NX", "EX", 300);
+
+      if (!lock) {
+        // ❌ If any seat fails, unlock already locked seats
+        for (let key of lockedKeys) {
+          await redis.del(key);
+        }
+
+        throw {
+          err: `Seat ${seat.seatNumber} in row ${seat.rowNumber} already locked`,
+          code: STATUS.BAD_REQUEST
+        };
+      }
+
+      lockedKeys.push(lockKey);
+    }
+
+    
     // 3️⃣ Calculate total cost
     data.totalCost = data.noOfSeats * show.price;
+    data.theatreId = show.theatreId;
+    data.movieId = show.movieId;
 
     // 4️⃣ Create booking (data already contains showId)
     const response = await Booking.create(data);

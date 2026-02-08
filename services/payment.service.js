@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Payment = require('../models/payment.model');
 const Booking = require('../models/booking.model');
 const Show = require('../models/show.model');
+const redis = require('../config/redis');
 
 const { STATUS, BOOKING_STATUS, PAYMENT_STATUS } = require('../utils/constants');
 
@@ -127,6 +128,17 @@ const createPayment = async (data) => {
         // 9️⃣ Commit
         await session.commitTransaction();
         session.endSession();
+
+
+        // 🔓 9️⃣ Remove Redis seat locks AFTER commit
+        if (booking.seat) {
+        const bookedSeats = JSON.parse(booking.seat.replaceAll("'", '"'));
+
+            for (let seat of bookedSeats) {
+            const lockKey = `lock:show:${booking.showId}:row:${seat.rowNumber}:seat:${seat.seatNumber}`;
+            await redis.del(lockKey);
+            }
+        }
 
         return booking;
 
