@@ -23,6 +23,8 @@ const paymentSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
+paymentSchema.index({ booking: 1 });
+
 const payment = mongoose.model('Payment', paymentSchema);
 
 module.exports = payment;

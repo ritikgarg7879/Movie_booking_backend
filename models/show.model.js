@@ -34,6 +34,11 @@ const showSchema = new Schema({
     }
 }, {timestamps: true});
 
+// 🔥 Indexes
+showSchema.index({ movieId: 1 });
+showSchema.index({ theatreId: 1 });
+showSchema.index({ movieId: 1, theatreId: 1 }); // compound index
+
 const Show = mongoose.model('Show', showSchema);
 
 module.exports = Show;

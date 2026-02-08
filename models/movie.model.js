@@ -41,6 +41,9 @@ const movieSchema=new Schema({
   }, 
 },{timestamps:true});  //In this remember that whenever we create the document so it will give created and updated at
 
+
+movieSchema.index({ name: 1 });
+
 const Movie= mongoose.model('Movie',movieSchema);  //creates the new model
 module.exports=Movie  //return the model
 

@@ -50,6 +50,12 @@ const bookingSchema = new Schema({
 
 }, {timestamps: true});
 
+// 🔥 Indexes for performance
+bookingSchema.index({ userId: 1 });
+bookingSchema.index({ showId: 1 });
+bookingSchema.index({ status: 1 });
+bookingSchema.index({ createdAt: -1 });
+
 const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;
