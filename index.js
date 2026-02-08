@@ -3,17 +3,9 @@ const express=require('express');
 const bodyParser=require('body-parser');
 const env=require('dotenv')
 const mongoose=require('mongoose');
+const { globalLimiter } = require('./middlewares/rateLimiter');
 
 // const Movie = require('./models/movie.model');
-
-const MovieRoutes=require('./routes/movie.routes');
-const TheatreRoutes=require('./routes/theatre.routes');
-const AuthRoutes=require('./routes/auth.routes');
-const UserRoutes=require('./routes/user.routes');
-const BookingRoutes=require('./routes/booking.routes');
-const ShowRoutes=require('./routes/show.routes');
-const PaymentRoutes=require('./routes/payment.routes');
-
 
 env.config();
 const app=express();
@@ -23,6 +15,17 @@ app.use(bodyParser.urlencoded({
   extended:true
 }));
 app.use(bodyParser.json())
+
+app.use(globalLimiter);
+
+const MovieRoutes=require('./routes/movie.routes');
+const TheatreRoutes=require('./routes/theatre.routes');
+const AuthRoutes=require('./routes/auth.routes');
+const UserRoutes=require('./routes/user.routes');
+const BookingRoutes=require('./routes/booking.routes');
+const ShowRoutes=require('./routes/show.routes');
+const PaymentRoutes=require('./routes/payment.routes');
+
 
 mongoose.set('debug',true);
 
