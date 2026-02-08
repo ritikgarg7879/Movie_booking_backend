@@ -1,6 +1,17 @@
 const Show = require('../models/show.model');
 const Theatre = require('../models/theatre.model');
 const { STATUS } = require('../utils/constants');
+const redis = require('../config/redis');
+
+
+const clearShowCache = async () => {
+  const keys = await redis.keys("shows:*");
+
+  if (keys.length > 0) {
+    await redis.del(keys);
+    console.log("🗑 Show cache cleared");
+  }
+};
 
 /**
  * 
@@ -22,8 +33,12 @@ const createShow = async (data) => {
                 code: STATUS.NOT_FOUND
             }
         }
-        const response = await Show.create(data);
-        return response;
+        const show = await Show.create(data);
+
+        await clearShowCache();  // 🔥 invalidate cache
+
+        return show;
+
     } catch (error) {
         if(error.name == 'ValidationError') {
             let err = {};
@@ -39,27 +54,60 @@ const createShow = async (data) => {
     }
 }
 
+// const getShows = async (data) => {
+//     try {
+//         let filter = {};
+//         if(data.theatreId) {
+//             filter.theatreId = data.theatreId;
+//         } 
+//         if(data.movieId) {
+//             filter.movieId = data.movieId;
+//         }
+//         const response = await Show.find(filter).populate('theatreId');
+//         if(!response) {
+//             throw {
+//                 err: 'No shows found',
+//                 code: STATUS.NOT_FOUND
+//             }
+//         }
+//         return response;
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
 const getShows = async (data) => {
-    try {
-        let filter = {};
-        if(data.theatreId) {
-            filter.theatreId = data.theatreId;
-        } 
-        if(data.movieId) {
-            filter.movieId = data.movieId;
-        }
-        const response = await Show.find(filter).populate('theatreId');
-        if(!response) {
-            throw {
-                err: 'No shows found',
-                code: STATUS.NOT_FOUND
-            }
-        }
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
+
+  const cacheKey = `shows:${JSON.stringify(data)}`;
+
+  // 1️⃣ Check Redis first
+  const cachedData = await redis.get(cacheKey);
+
+  if (cachedData) {
+    console.log("⚡ Serving Shows from Cache");
+    return JSON.parse(cachedData);
+  }
+
+  // 2️⃣ Build filter
+  let filter = {};
+
+  if (data.theatreId) {
+    filter.theatreId = data.theatreId;
+  }
+
+  if (data.movieId) {
+    filter.movieId = data.movieId;
+  }
+
+  // 3️⃣ Fetch from DB
+  const response = await Show.find(filter).populate('theatreId');
+
+  // 4️⃣ Store in Redis (TTL 60 seconds)
+  await redis.set(cacheKey, JSON.stringify(response), "EX", 60);
+
+  return response;
+};
+
 
 const deleteShow = async (id) => {
     try {
@@ -70,6 +118,9 @@ const deleteShow = async (id) => {
                 code: STATUS.NOT_FOUND
             }
         }
+
+        await clearShowCache();  // 🔥 invalidate cache
+        
         return response;
     } catch (error) {
         throw error;
@@ -88,7 +139,10 @@ const updateShow = async (id, data) => {
                 code: STATUS.NOT_FOUND
             }
         }
+        await clearShowCache();  // 🔥 invalidate cache
+        
         return response;
+
     } catch (error) {
         if(error.name == 'ValidationError') {
             let err = {};

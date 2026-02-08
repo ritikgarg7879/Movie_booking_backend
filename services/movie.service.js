@@ -2,6 +2,17 @@ const Movie=require('../models/movie.model');
 const {STATUS}=require('../utils/constants');
 const redis = require('../config/redis');
 
+
+
+const clearMovieCache = async () => {
+  const keys = await redis.keys("movies:*");
+
+  if (keys.length > 0) {
+    await redis.del(keys);
+    console.log("🗑 Movie cache cleared");
+  }
+};
+
 /**
  * 
  * @param data -> Objects containig details of the new movie created 
@@ -11,6 +22,9 @@ const redis = require('../config/redis');
 const createMovie=async(data)=>{
   try{
     const movie=await Movie.create(data);
+
+    await clearMovieCache(); //cache
+
     return movie;
   }catch(error){
     if(error.name == 'ValidationError'){
@@ -36,22 +50,21 @@ const createMovie=async(data)=>{
 
 
 
-const deleteMovie=async(id)=>{
-  try {
-    const response=await Movie.findByIdAndDelete(id);
-    if(!response){
-      throw {
-        err:"No movie record found for the id provided",
-        code:STATUS.NOT_FOUND
-      }
-    }
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
+const deleteMovie = async (id) => {
+
+  const movie = await Movie.findByIdAndDelete(id);
+
+  if (!movie) {
+    throw {
+      err: "No movie record found",
+      code: STATUS.NOT_FOUND
+    };
   }
-  
-}
+
+  await clearMovieCache();// cache
+
+  return movie;
+};
 
 /**
  * 
@@ -80,26 +93,64 @@ const getMovieById=async(id)=>{
  * @returns -> return the new updated movie details
  */
 
-const updateMovie=async (id,data)=>{
-  try{
-  const movie=await Movie.findByIdAndUpdate(id,data,{new:true,runValidators:true});
-  return movie;
-  }catch(error){
-    if(error.name == 'ValidationError'){
-        let err={};
-        Object.keys(error.errors).forEach((key)=>{
-          err[key]=error.errors[key].message;
-        });
-        console.log(err);
-        throw {
-          err:err,
-          code:STATUS.UNPROCESSABLE_ENTITY
-        };
-    }else{
-        throw error;
+// const updateMovie=async (id,data)=>{
+//   try{
+//   const movie=await Movie.findByIdAndUpdate(id,data,{new:true,runValidators:true});
+//   return movie;
+//   }catch(error){
+//     if(error.name == 'ValidationError'){
+//         let err={};
+//         Object.keys(error.errors).forEach((key)=>{
+//           err[key]=error.errors[key].message;
+//         });
+//         console.log(err);
+//         throw {
+//           err:err,
+//           code:STATUS.UNPROCESSABLE_ENTITY
+//         };
+//     }else{
+//         throw error;
+//     }
+//   }
+// }
+
+const updateMovie = async (id, data) => {
+  try {
+
+    const movie = await Movie.findByIdAndUpdate(
+      id,
+      data,
+      { new: true, runValidators: true }
+    );
+
+    if (!movie) {
+      throw {
+        err: "No movie found",
+        code: STATUS.NOT_FOUND
+      };
     }
+
+    await clearMovieCache();
+
+    return movie;
+
+  } catch (error) {
+
+    if (error.name == 'ValidationError') {
+      let err = {};
+      Object.keys(error.errors).forEach((key) => {
+        err[key] = error.errors[key].message;
+      });
+
+      throw {
+        err: err,
+        code: STATUS.UNPROCESSABLE_ENTITY
+      };
+    }
+
+    throw error;
   }
-}
+};
 
 
 /**
@@ -108,45 +159,46 @@ const updateMovie=async (id,data)=>{
  * @returns ->return an object containg all the movies fetched based on the filter
  */
 
-const fetchMovies=async(filter)=>{
-  let query={};
-  if(filter.name){
-    query.name=filter.name;
+// const fetchMovies=async(filter)=>{
+//   let query={};
+//   if(filter.name){
+//     query.name=filter.name;
+//   }
+//   let movies=await Movie.find(query)
+//   if(!movies){
+//     throw {
+//       err:"Not able to find the queries movies",
+//       code: STATUS.NOT_FOUND
+//     }
+//   }
+//   return movies;can
+// }
+
+const fetchMovies = async (filter) => {
+
+  const cacheKey = `movies:${JSON.stringify(filter)}`;
+
+  // 1️⃣ Check Redis
+  const cachedData = await redis.get(cacheKey);
+
+  if (cachedData) {
+    console.log("⚡ Serving Movies from Cache");
+    return JSON.parse(cachedData);
   }
-  let movies=await Movie.find(query)
-  if(!movies){
-    throw {
-      err:"Not able to find the queries movies",
-      code: STATUS.NOT_FOUND
-    }
+
+  // 2️⃣ If not in cache → fetch from DB
+  let query = {};
+  if (filter.name) {
+    query.name = filter.name;
   }
+
+  const movies = await Movie.find(query);
+
+  // 3️⃣ Store in Redis (TTL 60 seconds)
+  await redis.set(cacheKey, JSON.stringify(movies), "EX", 60);
+
   return movies;
-}
-
-// const fetchMovies = async (filter) => {
-
-//   const cacheKey = `movies:${JSON.stringify(filter)}`;
-
-//   // 1️⃣ Check Redis
-//   const cachedData = await redis.get(cacheKey);
-//   if (cachedData) {
-//     console.log("⚡ Serving Movies from Cache");
-//     return JSON.parse(cachedData);
-//   }
-
-//   // 2️⃣ If not in cache → fetch from DB
-//   let query = {};
-//   if (filter.name) {
-//     query.name = filter.name;
-//   }
-
-//   const movies = await Movie.find(query);
-
-//   // 3️⃣ Store in Redis (TTL 60 seconds)
-//   await redis.set(cacheKey, JSON.stringify(movies), "EX", 60);
-
-//   return movies;
-// };
+};
 
 
 module.exports={createMovie,getMovieById,deleteMovie,updateMovie,fetchMovies}
