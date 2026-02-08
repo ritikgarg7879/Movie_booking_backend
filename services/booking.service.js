@@ -3,37 +3,52 @@ const {STATUS}=require('../utils/constants');
 const Show = require('../models/show.model');
 
 
-
-const createBooking=async(data)=>{
+const createBooking = async (data) => {
   try {
-        const show = await Show.findOne({
-            movieId: data.movieId, 
-            theatreId: data.theatreId, 
-            _id: data.showId
-        });
-        console.log(data);
-        console.log(show.price, data.noOfSeats);
-        data.totalCost = data.noOfSeats*show.price;
-        const response = await Booking.create(data);
-        await show.save();
-        return response.populate('movieId theatreId');
-  } catch (error) {
-    console.log(error);
-    if(error.name == 'ValidationError'){
-        let err={};
-        Object.keys(error.errors).forEach((key)=>{
-          err[key]=error.errors[key].message;
-        });
-        throw {
-          err:err,
-          code:STATUS.UNPROCESSABLE_ENTITY
-        }
-    }else{
-      throw error;
-    }
-  }
-}
 
+    // 1️⃣ Fetch show using only showId
+    const show = await Show.findById(data.showId);
+
+    if (!show) {
+      throw {
+        err: "Show not found",
+        code: STATUS.NOT_FOUND
+      };
+    }
+
+    // 2️⃣ Validate seat availability
+    if (show.noOfSeats < data.noOfSeats) {
+      throw {
+        err: "Not enough seats available",
+        code: STATUS.BAD_REQUEST
+      };
+    }
+
+    // 3️⃣ Calculate total cost
+    data.totalCost = data.noOfSeats * show.price;
+
+    // 4️⃣ Create booking (data already contains showId)
+    const response = await Booking.create(data);
+
+    return response.populate('movieId theatreId showId');
+
+  } catch (error) {
+
+    if (error.name === 'ValidationError') {
+      let err = {};
+      Object.keys(error.errors).forEach((key) => {
+        err[key] = error.errors[key].message;
+      });
+
+      throw {
+        err,
+        code: STATUS.UNPROCESSABLE_ENTITY
+      };
+    }
+
+    throw error;
+  }
+};
 
 
 const updateBooking = async (data, bookingId) => {

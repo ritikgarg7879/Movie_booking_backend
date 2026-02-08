@@ -1,14 +1,19 @@
+const mongoose = require('mongoose');
 const Payment = require('../models/payment.model');
 const Booking = require('../models/booking.model');
 const Show = require('../models/show.model');
-const User = require('../models/user.model');
 
-const { STATUS, BOOKING_STATUS, PAYMENT_STATUS, USER_ROLE } = require('../utils/constants');
+const { STATUS, BOOKING_STATUS, PAYMENT_STATUS } = require('../utils/constants');
 
 const createPayment = async (data) => {
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        // 1️⃣ Fetch booking
-        const booking = await Booking.findById(data.bookingId);
+
+        // 1️⃣ Fetch booking inside session
+        const booking = await Booking.findById(data.bookingId).session(session);
 
         if (!booking) {
             throw {
@@ -17,7 +22,7 @@ const createPayment = async (data) => {
             };
         }
 
-        // 2️⃣ Prevent double / invalid payment
+        // 2️⃣ Prevent double payment
         if (booking.status === BOOKING_STATUS.successfull) {
             throw {
                 err: 'Booking already completed',
@@ -32,14 +37,14 @@ const createPayment = async (data) => {
             };
         }
 
-        // 3️⃣ Time validation (CORRECT WAY)
+        // 3️⃣ Check payment window
         const bookingTime = new Date(booking.createdAt).getTime();
         const currentTime = Date.now();
         const diffMinutes = (currentTime - bookingTime) / (1000 * 60);
 
         if (diffMinutes > 5) {
             booking.status = BOOKING_STATUS.expired;
-            await booking.save();
+            await booking.save({ session });
 
             throw {
                 err: 'Payment window expired (5 minutes)',
@@ -47,12 +52,8 @@ const createPayment = async (data) => {
             };
         }
 
-        // 4️⃣ Fetch show
-        const show = await Show.findOne({
-            movieId: booking.movieId,
-            theatreId: booking.theatreId,
-            showId: data.showId
-        });
+        // 4️⃣ Fetch show properly (using showId from booking)
+        const show = await Show.findById(booking.showId).session(session);
 
         if (!show) {
             throw {
@@ -61,20 +62,17 @@ const createPayment = async (data) => {
             };
         }
 
-        // 5️⃣ Create payment
-        const payment = await Payment.create({
-            booking: booking._id,
-            amount: data.amount,
-            status: PAYMENT_STATUS.pending
-        });
+        if (show.noOfSeats < booking.noOfSeats) {
+            throw {
+                err: 'Not enough seats available',
+                code: STATUS.BAD_REQUEST
+            };
+        }
 
-        // 6️⃣ Validate amount
-        if (payment.amount !== booking.totalCost) {
-            payment.status = PAYMENT_STATUS.failed;
+        // 5️⃣ Validate amount BEFORE creating payment
+        if (data.amount !== booking.totalCost) {
             booking.status = BOOKING_STATUS.cancelled;
-
-            await payment.save();
-            await booking.save();
+            await booking.save({ session });
 
             throw {
                 err: 'Payment amount mismatch',
@@ -82,14 +80,19 @@ const createPayment = async (data) => {
             };
         }
 
-        // 7️⃣ Mark payment & booking success
-        payment.status = PAYMENT_STATUS.success;
-        booking.status = BOOKING_STATUS.successfull;
+        // 6️⃣ Create payment (pending)
+        const [payment] = await Payment.create([{
+            booking: booking._id,
+            amount: data.amount,
+            status: PAYMENT_STATUS.success
+        }], { session });
 
-        // 8️⃣ Update show seats
+        // 7️⃣ Update show seats
         show.noOfSeats -= booking.noOfSeats;
 
+        // Seat configuration update
         if (show.seatConfiguration && booking.seat) {
+
             const showSeatConfig = JSON.parse(show.seatConfiguration.replaceAll("'", '"'));
             const bookedSeats = JSON.parse(booking.seat.replaceAll("'", '"'));
 
@@ -115,15 +118,23 @@ const createPayment = async (data) => {
             show.seatConfiguration = JSON.stringify(showSeatConfig).replaceAll('"', "'");
         }
 
-        // 9️⃣ Save everything
-        await show.save();
-        await booking.save();
-        await payment.save();
+        await show.save({ session });
+
+        // 8️⃣ Update booking status
+        booking.status = BOOKING_STATUS.successfull;
+        await booking.save({ session });
+
+        // 9️⃣ Commit
+        await session.commitTransaction();
+        session.endSession();
 
         return booking;
 
     } catch (error) {
-        console.log(error.err || error.message);
+
+        await session.abortTransaction();
+        session.endSession();
+
         throw error;
     }
 };

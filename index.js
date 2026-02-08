@@ -86,7 +86,7 @@ app.listen(process.env.PORT, async () => {
 
 
    try {
-        if(process.env.NODE_ENV == 'development') {
+        if(process.env.NODE_ENV == 'production') {
             await mongoose.connect(process.env.PROD_DB_URL); // connected to the mongo server
         } else {
             await mongoose.connect(process.env.DB_URL); // connected to the mongo server

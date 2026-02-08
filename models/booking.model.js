@@ -41,7 +41,13 @@ const bookingSchema = new Schema({
     },
     seat: {
         type: String,
-    }
+    },
+    showId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Show'
+},
+
 }, {timestamps: true});
 
 const Booking = mongoose.model('Booking', bookingSchema);
